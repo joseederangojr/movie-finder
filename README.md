@@ -42,9 +42,10 @@ Before you begin, ensure you have met the following requirements:
 1. Clone the repository: git clone https://github.com/joseederangojr/movie-finder
 2. Install dependencies: pnpm install
 4. Setup your local env variables
-    COLLECT_API_KEY=example:apikey
-    Note: remove the 'apikey '
-    REDIS_URL=redis://localhost:6379
+    - Create `.env.local` file
+    - `COLLECT_API_KEY=example:apikey`
+    - Note: remove the 'apikey '
+    - `REDIS_URL=redis://localhost:6379`
 3. Run the app locally: pnpm dev
 
 ## Improvements
