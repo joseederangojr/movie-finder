@@ -1,34 +1,12 @@
-"use client";
-
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { searchMovies, searchMovieById } from "./api";
-import type { Movie, FilterType, MovieDetails } from "@/types/movie";
-import { useEffect } from "react";
-import debounce from "lodash.debounce";
+import { searchMovies, searchMovieById, type SearchMovieParams } from "./api";
+import type { Movie, Type, MovieDetails } from "@/types/movie";
 
-export function useMovieSearch(
-	query: string,
-	filterType: FilterType,
-	year: string,
-) {
-	const queryClient = useQueryClient();
-
-	useEffect(() => {
-		const debouncedInvalidate = debounce(() => {
-			queryClient.invalidateQueries(["movies", { query, filterType, year }]);
-		}, 300);
-
-		debouncedInvalidate();
-
-		return () => {
-			debouncedInvalidate.cancel();
-		};
-	}, [query, filterType, year, queryClient]);
-
+export function useMovieSearch(params: SearchMovieParams) {
 	return useQuery<Movie[], Error>({
-		queryKey: ["movies", { query, filterType, year }],
-		queryFn: () => searchMovies(query, filterType, year),
-		enabled: !!query,
+		queryKey: ["movies", params],
+		queryFn: () => searchMovies(params),
+		enabled: !!params.query,
 	});
 }
 

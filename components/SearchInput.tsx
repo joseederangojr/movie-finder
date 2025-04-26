@@ -4,40 +4,38 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, X } from "lucide-react";
 
-interface SearchInputProps {
-	value: string;
-	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	onFocus: () => void;
-	onBlur: (e: React.FocusEvent) => void;
+interface SearchInputProps
+	extends React.PropsWithoutRef<React.ComponentProps<"input">> {
+	search: string;
+	onSearch: (search: string) => void;
 	onReset: () => void;
-	isExpanded: boolean;
-	isTransitioning: boolean;
+	expand: boolean;
 }
 
 export function SearchInput({
-	value,
-	onChange,
-	onFocus,
-	onBlur,
+	search,
+	onSearch,
 	onReset,
-	isExpanded,
-	isTransitioning,
+	expand,
+	...props
 }: SearchInputProps) {
+	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+		onSearch(e.target.value);
+	};
 	return (
 		<div className="relative flex-1">
 			<Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 h-5 w-5" />
 			<Input
 				className={`pl-10 pr-10 transition-all duration-500 ease-in-out ${
-					isTransitioning ? "py-4 sm:py-6 text-lg sm:text-xl" : ""
+					expand ? "py-4 sm:py-6 text-lg sm:text-xl" : ""
 				}`}
 				placeholder="Search for a movie..."
 				type="search"
-				value={value}
-				onChange={onChange}
-				onFocus={onFocus}
-				onBlur={onBlur}
+				value={search}
+				onChange={handleSearch}
+				{...props}
 			/>
-			{isExpanded && value && (
+			{expand && search && (
 				<Button
 					type="button"
 					variant="ghost"

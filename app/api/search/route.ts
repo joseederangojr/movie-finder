@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
-import type { FilterType } from "@/types/movie";
+import type { Type } from "@/types/movie";
 import cache from "@/lib/cache";
 
 const API_KEY = process.env.COLLECT_API_KEY;
 const CACHE_TTL = 60; // 1 minute
 
 export async function GET(request: Request) {
-	const { searchParams } = new URL(request.url);
-	const query = searchParams.get("query");
-	const filterType = searchParams.get("filterType") as FilterType;
-	const year = searchParams.get("year");
+	const url = new URL(request.url);
+	const query = url.searchParams.get("query");
+	const type = (url.searchParams.get("type") || "") as Type;
+	const year = url.searchParams.get("year") || "";
 
 	if (!query) {
 		return NextResponse.json(
@@ -18,7 +18,9 @@ export async function GET(request: Request) {
 		);
 	}
 
-	const cacheKey = `search:${query}:${filterType || "all"}:${year || ""}`;
+	const searchParams = new URLSearchParams({ query, type, year });
+
+	const cacheKey = `search:${searchParams.toString()}`;
 
 	// Try to get data from cache
 	const cachedData = await cache.get(cacheKey);
@@ -26,21 +28,17 @@ export async function GET(request: Request) {
 		console.info("Serving from cache");
 		return NextResponse.json(JSON.parse(cachedData));
 	}
-	let url = `https://api.collectapi.com/imdb/imdbSearchByName?query=${encodeURIComponent(query)}`;
-	if (filterType && filterType !== "all") {
-		url += `&type=${filterType}`;
-	}
-	if (year) {
-		url += `&year=${year}`;
-	}
 
 	try {
-		const response = await fetch(url, {
-			headers: {
-				authorization: `apikey ${API_KEY}`,
-				"content-type": "application/json",
+		const response = await fetch(
+			`https://api.collectapi.com/imdb/imdbSearchByName?${searchParams.toString()}`,
+			{
+				headers: {
+					authorization: `apikey ${API_KEY}`,
+					"content-type": "application/json",
+				},
 			},
-		});
+		);
 
 		const data = await response.json();
 
@@ -49,12 +47,14 @@ export async function GET(request: Request) {
 			await cache.set(cacheKey, JSON.stringify(data.result), CACHE_TTL);
 			return NextResponse.json(data.result);
 		} else {
+			console.error(JSON.stringify(data));
 			return NextResponse.json(
 				{ error: data.message || "An error occurred while fetching movies." },
 				{ status: 500 },
 			);
 		}
 	} catch (error) {
+		console.error(JSON.stringify(error));
 		return NextResponse.json(
 			{ error: "An error occurred while fetching movies." },
 			{ status: 500 },

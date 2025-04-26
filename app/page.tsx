@@ -1,53 +1,12 @@
 "use client";
-
-import { useState, useEffect, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { SearchForm } from "@/components/SearchForm";
 import { MovieList } from "@/components/MovieList";
-import { useMovieSearch } from "@/lib/queries";
-import type { FilterType } from "@/types/movie";
-import debounce from "lodash.debounce";
 import { cn } from "@/lib/utils";
+import { useMovieSearchParams } from "@/hooks/use-movie-search-params";
 
 export default function Home() {
-	const router = useRouter();
-	const searchParams = useSearchParams();
-	const [isExpanded, setIsExpanded] = useState(false);
-
-	const query = searchParams.get("query") || "";
-	const filterType = (searchParams.get("filterType") as FilterType) || "all";
-	const year = searchParams.get("year") || "";
-
-	const {
-		data: movies,
-		isLoading,
-		error,
-	} = useMovieSearch(query, filterType, year);
-
-	useEffect(() => {
-		if (query || filterType !== "all" || year) {
-			setIsExpanded(true);
-		}
-	}, [query, filterType, year]);
-
-	const debouncedSearch = useCallback(
-		debounce((newQuery: string, newFilterType: FilterType, newYear: string) => {
-			const params = new URLSearchParams();
-			if (newQuery) params.set("query", newQuery);
-			if (newFilterType !== "all") params.set("filterType", newFilterType);
-			if (newYear) params.set("year", newYear);
-			router.push(`/?${params.toString()}`);
-		}, 300),
-		[],
-	);
-
-	const handleSearch = (
-		newQuery: string,
-		newFilterType: FilterType,
-		newYear: string,
-	) => {
-		debouncedSearch(newQuery, newFilterType, newYear);
-	};
+	const { params } = useMovieSearchParams();
+	const isExpanded = !!(params.query || params.type !== "" || params.year);
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 transition-all duration-500 ease-in-out px-4 sm:px-6 lg:px-8">
@@ -66,21 +25,10 @@ export default function Home() {
 				>
 					MovieFinder
 				</h1>
-				<SearchForm
-					onSearch={handleSearch}
-					isExpanded={isExpanded}
-					setIsExpanded={setIsExpanded}
-					initialQuery={query}
-					initialFilterType={filterType}
-					initialYear={year}
-				/>
+				<SearchForm />
 				{isExpanded && (
 					<div className="w-full max-w-3xl mx-auto mt-4">
-						<MovieList
-							movies={movies || []}
-							isLoading={isLoading}
-							error={error?.message || null}
-						/>
+						<MovieList />
 					</div>
 				)}
 			</main>

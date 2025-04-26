@@ -1,8 +1,9 @@
 "use client";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type React from "react";
+import { Inter } from "next/font/google";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,10 +16,9 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={inter.className}>
 				<QueryClientProvider client={queryClient}>
-					{children}
+					<NuqsAdapter>{children}</NuqsAdapter>
 				</QueryClientProvider>
 			</body>
 		</html>
 	);
 }
-

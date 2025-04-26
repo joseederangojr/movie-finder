@@ -1,22 +1,22 @@
 "use client";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import type { FilterType } from "@/types/movie";
+import type { Type } from "@/types/movie";
 
 interface FilterRadioGroupProps {
-	value: FilterType;
-	onChange: (value: FilterType) => void;
+	value: Type;
+	onChange: (value: Type) => void;
 }
 
 export function FilterRadioGroup({ value, onChange }: FilterRadioGroupProps) {
 	return (
 		<RadioGroup
 			value={value}
-			onValueChange={onChange}
+			onValueChange={(v) => onChange(v as Type)}
 			className="flex flex-wrap justify-center gap-4"
 		>
 			<div className="flex items-center space-x-2">
-				<RadioGroupItem value="all" id="all" />
+				<RadioGroupItem value="" id="all" />
 				<Label htmlFor="all">All</Label>
 			</div>
 			<div className="flex items-center space-x-2">

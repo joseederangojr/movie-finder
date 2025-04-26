@@ -1,15 +1,22 @@
 "use client";
 import Link from "next/link";
-import type { Movie } from "@/types/movie";
+import type { Type } from "@/types/movie";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useMovieSearch } from "@/lib/queries";
+import { useMovieSearchParams } from "@/hooks/use-movie-search-params";
 
-interface MovieListProps {
-	movies: Movie[];
-	isLoading: boolean;
-	error: string | null;
-}
+export function MovieList() {
+	const { params } = useMovieSearchParams();
+	const {
+		data: movies,
+		isLoading,
+		error,
+	} = useMovieSearch({
+		query: params.query,
+		type: params.type as Type,
+		year: params.year,
+	});
 
-export function MovieList({ movies, isLoading, error }: MovieListProps) {
 	if (isLoading) {
 		return (
 			<div className="space-y-4">
@@ -31,16 +38,16 @@ export function MovieList({ movies, isLoading, error }: MovieListProps) {
 	}
 
 	if (error) {
-		return <p className="text-red-500 text-center">{error}</p>;
+		return <p className="text-red-500 text-center">{error.message}</p>;
 	}
 
-	if (movies.length === 0) {
+	if (movies?.length === 0) {
 		return <p className="text-center">No movies found.</p>;
 	}
 
 	return (
 		<ul className="space-y-4">
-			{movies.map((movie) => (
+			{movies?.map((movie) => (
 				<li
 					key={movie.imdbID}
 					className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
