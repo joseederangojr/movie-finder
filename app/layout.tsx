@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +17,9 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={inter.className}>
 				<QueryClientProvider client={queryClient}>
-					<NuqsAdapter>{children}</NuqsAdapter>
+					<NuqsAdapter>
+						<Suspense>{children}</Suspense>
+					</NuqsAdapter>
 				</QueryClientProvider>
 			</body>
 		</html>
