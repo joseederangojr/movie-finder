@@ -38,6 +38,7 @@ export default function MovieDetailsPage() {
 			<div className="max-w-3xl mx-auto">
 				<Button
 					onClick={back}
+					variant="ghost"
 					className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6"
 				>
 					<ArrowLeft className="mr-2" size={20} />
