@@ -1,14 +1,16 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useMovieDetails } from "@/hooks/use-movies";
 import { MovieDetailsSkeleton } from "@/components/MovieDetailsSkeleton";
 import { MovieInfo } from "@/components/MovieInfo";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function MovieDetailsPage() {
 	const { id } = useParams();
+	const { back } = useRouter();
 	const { data: movie, isLoading, error } = useMovieDetails(id as string);
 
 	if (isLoading) {
@@ -34,13 +36,13 @@ export default function MovieDetailsPage() {
 	return (
 		<div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
 			<div className="max-w-3xl mx-auto">
-				<Link
-					href="/"
+				<Button
+					onClick={back}
 					className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6"
 				>
 					<ArrowLeft className="mr-2" size={20} />
-					Back to Search
-				</Link>
+					Back
+				</Button>
 				<MovieInfo movie={movie} />
 			</div>
 		</div>
