@@ -2,7 +2,7 @@
 import Link from "next/link";
 import type { Type } from "@/types/movie";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useMovieSearch } from "@/lib/queries";
+import { useMovieSearch } from "@/hooks/use-movies";
 import { useMovieSearchParams } from "@/hooks/use-movie-search-params";
 
 export function MovieList() {
@@ -12,7 +12,7 @@ export function MovieList() {
 		isLoading,
 		error,
 	} = useMovieSearch({
-		query: params.query,
+		query: params.debounceQuery,
 		type: params.type as Type,
 		year: params.year,
 	});

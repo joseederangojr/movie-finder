@@ -30,7 +30,6 @@ export function SearchInput({
 					expand ? "py-4 sm:py-6 text-lg sm:text-xl" : ""
 				}`}
 				placeholder="Search for a movie..."
-				type="search"
 				value={search}
 				onChange={handleSearch}
 				{...props}

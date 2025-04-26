@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Type } from "@/types/movie";
 import { parseAsString, useQueryStates } from "nuqs";
-import debounce from "lodash.debounce";
+import { useDebounceValue } from "./use-debounce-value";
 
 export const useMovieSearchParams = () => {
 	const [params, setParams] = useQueryStates({
@@ -10,13 +10,19 @@ export const useMovieSearchParams = () => {
 		year: parseAsString.withDefault(""),
 	});
 
+	const [debouncedValue, setDebouncedValue] = useDebounceValue(
+		params.query,
+		1000,
+	);
+
 	const setSearch = React.useCallback(
-		debounce((query: string) => {
+		(query: string) => {
 			setParams((prev) => ({
 				...prev,
 				query,
 			}));
-		}, 300),
+			setDebouncedValue(query);
+		},
 		[setParams],
 	);
 
@@ -35,7 +41,10 @@ export const useMovieSearchParams = () => {
 	}, [setParams]);
 
 	return {
-		params,
+		params: {
+			...params,
+			debounceQuery: debouncedValue,
+		},
 		setSearch,
 		setType,
 		setYear,

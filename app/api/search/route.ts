@@ -47,14 +47,9 @@ export async function GET(request: Request) {
 			await cache.set(cacheKey, JSON.stringify(data.result), CACHE_TTL);
 			return NextResponse.json(data.result);
 		} else {
-			console.error(JSON.stringify(data));
-			return NextResponse.json(
-				{ error: data.message || "An error occurred while fetching movies." },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "No movies found" }, { status: 404 });
 		}
 	} catch (error) {
-		console.error(JSON.stringify(error));
 		return NextResponse.json(
 			{ error: "An error occurred while fetching movies." },
 			{ status: 500 },
